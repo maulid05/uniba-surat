@@ -112,55 +112,76 @@
                     </div>
 
                 @endif
-
+                
                 <hr class="my-6 border-gray-300 dark:border-gray-700">
 
-                <form
-                    method="POST"
-                    action="{{ route('surat.approve',$surat->id) }}">
+                @if($reciveuser && $reciveuser->to_user_id == auth()->id())
+                <div class="gap-3">
+                    <div class="flex gap-3 justify-end">
+                    <form
+                        method="POST"
+                        action="{{ route('surat.approve',$surat->id) }}">
 
-                    @csrf
+                        @csrf
 
-                    @if($accepted)
+                        <button
+                            type="submit"
+                            class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg">
 
-                        <span class="px-5 py-2 bg-green-600 text-white rounded-lg">
-                            Anda sudah menyetujui surat ini
-                        </span>
-                    @else
+                            Setujui Surat
 
-                    @if($surat->pengirim_id != auth()->id())
+                        </button>
+                    </form>
+                    <form method="POST" action="{{ route('disposisi.tolak', $surat->id) }}" class="inline">
+                        @csrf
+                        <button
+                            type="submit"
+                            class="px-5 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg">
 
-                    @elseif($reciveuser && $reciveuser->id == auth()->id())
-                    <button
-                        type="submit"
-                        class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg">
-                        
-                        Setujui Surat
-                        
-                    </button>
-                    @endif
-                    @endif
+                            Tolak Surat
+                        </button>
+                    </form>
+                    <form method="POST" action="{{ route('disposisi.revisi', $surat->id) }}" class="inline">
+                        @csrf
+                        <button
+                            type="submit"
+                            class="px-5 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg">
 
-                </form>
+                            Revisi Surat
+                        </button>
+                    </form>
+                        @endif
 
 
-                @foreach($approvals as $approval)
-                    <div class="mt-4">
+                    <form method= "POST" action="{{ route('disposisi.teruskan', $surat->id) }}" class="inline">
+                        @csrf
+                        <button
+                            type="submit"
+                            class="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
 
-                        <h4 class="text-md font-semibold text-gray-900 dark:text-white mb-2">
-                            {{ $approval->user->name }}
-                        </h4>
+                            Teruskan
 
-                        {!! QrCode::size(150)->generate(
-                            route(
-                                'verify.qr',
-                                $approval->qr_token
-                            )
-                        ) !!}
+                        </button>
+                    </form>
+                </div>
+                    <hr class="my-6 border-gray-300 dark:border-gray-700">
+    
+                    @foreach($approvals as $approval)
+                        <div class="mt-4">
+    
+                            <h4 class="text-md font-semibold text-gray-900 dark:text-white mb-2">
+                                {{ $approval->user->name }}
+                            </h4>
 
-                    </div>
 
-                @endforeach
+                            {!! QrCode::size(150)->generate(
+                                config('app.url') . '/surat/' . $approval->surat_id
+                            ) !!}
+    
+                        </div>
+    
+                    @endforeach
+                </div>
 
             </div>
 

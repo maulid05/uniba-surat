@@ -92,7 +92,7 @@
 
                                 <td class="px-4 py-3 text-gray-800 dark:text-gray-200">
 
-                                    {{ $item->fromUser->name ?? '-' }}
+                                    {{ $item->surat->fromUser->name ?? '-' }}
 
                                 </td>
 

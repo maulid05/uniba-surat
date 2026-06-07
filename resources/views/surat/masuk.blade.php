@@ -62,6 +62,7 @@
 
                         @forelse($suratMasuk as $item)
 
+                            @if($item->status == 'menunggu' || $item->status == 'diteruskan' || $item->status == 'revisi')
                             <tr class="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
 
                                 <td class="px-4 py-3 text-gray-800 dark:text-gray-200">
@@ -123,21 +124,22 @@
                                     @endif
 
                                 </td>
-
+                                
                                 <td class="px-4 py-3 text-center">
-
+                                    
                                     <a
-                                        href="{{ route('surat.show',$item->surat_id) }}"
-                                        class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded">
-
-                                        Detail
-
-                                    </a>
-
-                                </td>
-
-                            </tr>
-
+                                    href="{{ route('surat.show',$item->surat_id) }}"
+                                    class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded">
+                                    
+                                    Detail
+                                    
+                                </a>
+                                
+                            </td>
+                            
+                        </tr>
+                        
+                        @endif
                         @empty
 
                             <tr>

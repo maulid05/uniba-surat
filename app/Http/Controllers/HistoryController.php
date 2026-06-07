@@ -12,6 +12,15 @@ class HistoryController extends Controller
             'surat',
             'user'
         ])
+        ->where(function ($query) {
+            $query->where('user_id', auth()->id())
+                ->orWhereHas('surat', function ($q) {
+                    $q->whereHas('disposisis', function ($qq) {
+                        $qq->where('to_user_id', auth()->id())
+                        ->orWhere('from_user_id', auth()->id());
+                    });
+                });
+        })
         ->latest()
         ->paginate(15);
 
@@ -20,7 +29,6 @@ class HistoryController extends Controller
             compact('histories')
         );
     }
-
     public function show($id)
     {
         $history = SuratHistory::with([

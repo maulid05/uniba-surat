@@ -117,9 +117,10 @@
                             </label>
 
                             <select
+                                id="tujuan"
                                 multiple
                                 name="tujuan[]"
-                                class="w-full rounded-lg border-gray-300 dark:bg-gray-700 dark:text-white h-40">
+                                class="w-full rounded-lg border-gray-300 dark:bg-gray-700 dark:text-white">
 
                                 @foreach($users as $user)
 
@@ -195,5 +196,25 @@
         </div>
 
     </div>
-
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    new TomSelect('#tujuan', {
+        plugins: ['remove_button'],
+        placeholder: 'Cari nama pengguna...',
+        searchField: ['text'],
+        maxOptions: 100,
+        create: false
+    });
+});
+</script><script>
+document.addEventListener('DOMContentLoaded', function () {
+    new TomSelect('#tujuan', {
+        plugins: ['remove_button'],
+        placeholder: 'Cari nama pengguna...',
+        searchField: ['text'],
+        maxOptions: 100,
+        create: false
+    });
+});
+</script>
 </x-app-layout>

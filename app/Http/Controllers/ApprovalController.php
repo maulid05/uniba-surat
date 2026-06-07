@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Approval;
 use App\Models\Surat;
 use App\Models\SuratHistory;
+use App\Models\SuratDisposisi;
 use Illuminate\Support\Str;
 
 class ApprovalController extends Controller
@@ -50,7 +51,9 @@ class ApprovalController extends Controller
         }
 
         // Generate token QR
-        $token = (string) Str::uuid();
+        $link = route('surat.show', $surat->id);
+        //dd($link);
+        $token = (string) Str::uuid($link);
 
         // Simpan approval
         Approval::create([
@@ -74,9 +77,6 @@ class ApprovalController extends Controller
             $surat->id
         )->count();
 
-        /*
-         * Jika masih menggunakan tabel surat_tujuans
-         */
         if (method_exists($surat, 'tujuan')) {
 
             $totalTujuan = $surat->tujuan()->count();
@@ -90,6 +90,17 @@ class ApprovalController extends Controller
                 ]);
             }
         }
+
+        Suratdisposisi::where('surat_id', $surat->id)
+            ->where('to_user_id', auth()->id())
+            ->update([
+                'status' => 'disetujui'
+            ]);
+
+        Surat::where('id', $surat->id)
+            ->update([
+                'status' => 'disetujui'
+            ]);
 
         return back()->with(
             'success',

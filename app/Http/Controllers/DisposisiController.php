@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\SuratDisposisi;
 use App\Models\SuratHistory;
+use App\Models\Surat;
 use App\Models\User;
 
 class DisposisiController extends Controller
@@ -26,8 +27,11 @@ class DisposisiController extends Controller
     }
     public function teruskan($id)
 {
-    $disposisi = SuratDisposisi::findOrFail($id);
-
+    $disposisi = SuratDisposisi::where('surat_id', $id)
+    ->where('to_user_id', auth()->id())
+    ->first();
+    
+    //dd($disposisi);
     $atasan = User::where(
         'secretary_id',
         auth()->id()
@@ -46,7 +50,7 @@ class DisposisiController extends Controller
         'surat_id' => $disposisi->surat_id,
         'from_user_id' => auth()->id(),
         'to_user_id' => $atasan->id,
-        'status' => 'menunggu'
+        'status' => 'diteruskan'
     ]);
 
     $disposisi->update([
@@ -60,6 +64,11 @@ class DisposisiController extends Controller
         'catatan' => 'Surat diteruskan'
     ]);
 
+    Surat::where('id', $disposisi->surat_id)
+        ->update([
+            'status' => 'disposisi'
+        ]);
+
     return back()
         ->with(
             'success',
@@ -68,23 +77,18 @@ class DisposisiController extends Controller
 }
 public function revisi(Request $request, $id)
 {
-    $request->validate([
-        'catatan' => 'required'
-    ]);
 
     $disposisi =
         SuratDisposisi::findOrFail($id);
 
     $disposisi->update([
         'status' => 'revisi',
-        'catatan' => $request->catatan
     ]);
 
     SuratHistory::create([
         'surat_id' => $disposisi->surat_id,
         'user_id' => auth()->id(),
         'aksi' => 'Revisi Surat',
-        'catatan' => $request->catatan
     ]);
 
     return back()
@@ -95,24 +99,25 @@ public function revisi(Request $request, $id)
 }
 public function tolak(Request $request, $id)
 {
-    $request->validate([
-        'catatan' => 'required'
-    ]);
-
     $disposisi =
-        SuratDisposisi::findOrFail($id);
+        SuratDisposisi::where('surat_id', $id)
+        ->where('to_user_id', auth()->id())
+        ->firstOrFail();
 
     $disposisi->update([
         'status' => 'ditolak',
-        'catatan' => $request->catatan
     ]);
 
     SuratHistory::create([
         'surat_id' => $disposisi->surat_id,
         'user_id' => auth()->id(),
         'aksi' => 'Menolak Surat',
-        'catatan' => $request->catatan
     ]);
+
+    Surat::where('id', $disposisi->surat_id)
+        ->update([
+            'status' => 'ditolak'
+        ]);
 
     return back()
         ->with(

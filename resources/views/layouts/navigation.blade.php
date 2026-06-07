@@ -16,6 +16,7 @@
                     Dashboard
                 </x-nav-link>
 
+                @if(!auth()->user()->hasRole('Admin'))
                 <x-nav-link :href="route('surat.index')">
                     Surat
                 </x-nav-link>
@@ -23,18 +24,18 @@
                 <x-nav-link :href="route('surat.masuk')">
                     Surat Masuk
                 </x-nav-link>
-
-                <x-nav-link :href="route('approval.index')">
-                    Approval
-                </x-nav-link>
-
                 <x-nav-link :href="route('history.index')">
                     Riwayat
                 </x-nav-link>
-
+                @endif
+                @if (auth()->user()->hasRole('Admin'))
+                <x-nav-link :href="route('roles.index')">
+                    Role
+                </x-nav-link>
                 <x-nav-link :href="route('users.index')">
                     User
                 </x-nav-link>
+                @endif
                 </div>
             </div>
 

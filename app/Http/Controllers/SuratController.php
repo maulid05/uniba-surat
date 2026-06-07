@@ -115,8 +115,12 @@ class SuratController extends Controller
         $reciveuser = $surat->disposisis()
             ->where('to_user_id', auth()->id())
             ->first();
+        //dd($reciveuser->toUser->id);
 
-        return view('surat.show', compact('surat', 'approvals', 'accepted', 'reciveuser'));
+        $secretarycheck = User::where('secretary_id', auth()->id())->get();
+        //dd($secretarycheck->pluck('id', 'name'));
+
+        return view('surat.show', compact('surat', 'approvals', 'accepted', 'reciveuser', 'secretarycheck'));
     }
 
     /**
