@@ -30,6 +30,7 @@ return new class extends Migration
                 ->cascadeOnDelete();
 
             $table->enum('status',[
+                'draft',
                 'disposisi',
                 'terkirim',
                 'revisi',
